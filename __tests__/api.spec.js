@@ -25,7 +25,7 @@ describe('testing the API server', () => {
     request(api).get('/students').expect(200, done)
   })
 
-  it('responds to a GET request of the "/students/Kevin" endpoint (Kevin is not present on the DatabAse) with a HTML Status of 404 (Not Allowed)', (done) => {
+  it('responds to a GET request of the "/students/Kevin" endpoint (Kevin is not present on the DatabAse) with a HTML Status of 404 (Not Found)', (done) => {
     request(api)
       .get('/students/Kevin')
       .expect(404)
@@ -46,6 +46,20 @@ describe('testing the API server', () => {
       .expect(testData, done)
   })
 
+  it('responds to a POST request of the "/students" endpoint (Student already exists in the Database) with a HTTP Status of 405 (Not Allowed)', (done) => {
+    const testData = {
+      name: 'Simon',
+      subject: 'History',
+      grade: 'Excellent',
+    }
+
+    request(api)
+      .post('/students')
+      .send(testData)
+      .expect(405)
+      .expect({ error: 'A student with that name already exists' }, done)
+  })
+
   it('responds to a DELETE request of the "/students/Kelvin1324dgj" endpoint (Kelvin is NOT in the DataBase) with a HTTP Status of 404 (Not Found)', (done) => {
     request(api).delete('/students/Kelvin1324dgj').expect(404, done)
   })
@@ -62,6 +76,35 @@ describe('testing the API server', () => {
       .send(testData)
       .expect(201)
       .expect(testData, done)
+
     request(api).delete('/students/Melvin2468qet').expect(200, done)
+  })
+
+  it('responds to a PUT request of the "/students/Simon" endpoint with a HTTP Status of 200 (OK)', (done) => {
+    const testData = {
+      name: 'Arthur2468adgj',
+      subject: 'Geography',
+      grade: 'Sufficient',
+    }
+
+    request(api)
+      .put('/students/Simon')
+      .send(testData)
+      .expect(200)
+      .expect(testData, done)
+  })
+
+  it('responds to a PUT request of the "/students/Kevin246zcb" endpoint (student not in the Database) with a HTTP Status of 404 (NOT FOUND)', (done) => {
+    const testData = {
+      name: 'Arthur2468adgj',
+      subject: 'Geography',
+      grade: 'Sufficient',
+    }
+
+    request(api)
+      .put('/students/Kevin246zcb')
+      .send(testData)
+      .expect(404)
+      .expect({ error: 'That student is not in our Database!' }, done)
   })
 })

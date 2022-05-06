@@ -74,12 +74,14 @@ app.post('/students', (req, res) => {
   )
 
   try {
-  } catch (err) {}
-  if (foundStudentIndex !== -1) {
-    res.status(405).send({ message: 'Another user with the same name exists' })
-  } else {
-    students.push(newStudent)
-    res.status(201).send(newStudent)
+    if (foundStudentIndex !== -1) {
+      throw new StudentExistsError()
+    } else {
+      students.push(newStudent)
+      res.status(201).send(newStudent)
+    }
+  } catch (err) {
+    res.status(405).send({ error: err.message })
   }
 })
 
@@ -99,6 +101,26 @@ app.delete('/students/:name', (req, res) => {
       let message = `${studentName} has been deleted.`
       console.log(message)
       res.status(200).send({ message })
+    }
+  } catch (err) {
+    res.status(404).send({ error: err.message })
+  }
+})
+
+app.put('/students/:name', (req, res) => {
+  const studentNameToMatch = req.params.name
+  let newData = req.body
+
+  try {
+    let studentIndex = students.findIndex(
+      (student) => student.name === studentNameToMatch
+    )
+
+    if (studentIndex === -1) {
+      throw new StudentNotFoundError()
+    } else {
+      students.splice(studentIndex, 1, newData)
+      res.status(200).send(newData)
     }
   } catch (err) {
     res.status(404).send({ error: err.message })
