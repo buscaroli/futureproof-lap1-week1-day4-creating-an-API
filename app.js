@@ -24,7 +24,7 @@ app.get('/', (req, res) => {
 
 app.get('/students', (req, res) => {
   if (students.length === 0) {
-    res.json({ message: 'No students in the Database.' })
+    res.status(404).send({ error: 'No students in the Database.' })
   }
   res.json(students)
 })
