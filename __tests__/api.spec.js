@@ -46,19 +46,22 @@ describe('testing the API server', () => {
       .expect(testData, done)
   })
 
-  it('responds to a DELETE request of the "/students/Matt" endpoint with a HTTP Status of 404 (Not Found)', (done) => {
-    request(api).delete('/students/Matt').expect(204, done)
+  it('responds to a DELETE request of the "/students/Kelvin1324dgj" endpoint (Kelvin is NOT in the DataBase) with a HTTP Status of 404 (Not Found)', (done) => {
+    request(api).delete('/students/Kelvin1324dgj').expect(404, done)
   })
 
-  it('responds to a DELETE request of the "/students/Simon" endpoint with a HTTP Status of 204 (Deleted)', (done) => {
-    const testData = [
-      {
-        name: 'Simon',
-        subject: 'Math',
-        grade: 'sufficient',
-      },
-    ]
+  it('responds to a DELETE request of the "/students/Simon" endpoint with a HTTP Status of 200 (OK), after creating the user', (done) => {
+    const testData = {
+      name: 'Melvin2468qet',
+      subject: 'History',
+      grade: 'Excellent',
+    }
 
-    request(api).delete('/students/Simon').expect(204, done)
+    request(api)
+      .post('/students')
+      .send(testData)
+      .expect(201)
+      .expect(testData, done)
+    request(api).delete('/students/Melvin2468qet').expect(200, done)
   })
 })

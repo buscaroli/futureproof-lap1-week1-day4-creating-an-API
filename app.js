@@ -6,6 +6,7 @@ const app = express()
 app.use(express.json())
 app.use(cors())
 
+// Error Handling
 class StudentNotFoundError extends Error {
   constructor() {
     super('That student is not in our Database!')
@@ -13,6 +14,14 @@ class StudentNotFoundError extends Error {
   }
 }
 
+class StudentExistsError extends Error {
+  constructor() {
+    super('A student with that name already exists')
+    this.name = 'StudentExistsError'
+  }
+}
+
+// Sample Data
 const students = [
   { name: 'Matt', subject: 'Math', grade: 'good' },
   { name: 'Simon', subject: 'History', grade: 'excellent' },
@@ -63,6 +72,9 @@ app.post('/students', (req, res) => {
     (student) =>
       student.name.toLocaleLowerCase() === newStudent.name.toLowerCase()
   )
+
+  try {
+  } catch (err) {}
   if (foundStudentIndex !== -1) {
     res.status(405).send({ message: 'Another user with the same name exists' })
   } else {
@@ -81,12 +93,12 @@ app.delete('/students/:name', (req, res) => {
     console.log('delete - foundStudent', foundStudentIndex)
 
     if (foundStudentIndex === -1) {
-      throw new StudentNotFoundError('We could not delete that student')
+      throw new StudentNotFoundError()
     } else {
       students.splice(foundStudentIndex, 1)
       let message = `${studentName} has been deleted.`
       console.log(message)
-      res.status(204).send({ message })
+      res.status(200).send({ message })
     }
   } catch (err) {
     res.status(404).send({ error: err.message })
