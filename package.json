@@ -1,0 +1,24 @@
+{
+  "name": "futureproof-lap1-week1-day4-creating-an-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "jest --watchAll",
+    "dev": "nodemon index.js",
+    "coverage": "jest --coverage"
+  },
+  "keywords": [],
+  "author": "Matteo",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.1"
+  },
+  "devDependencies": {
+    "cors": "^2.8.5",
+    "jest": "^28.1.0",
+    "nodemon": "^2.0.16",
+    "supertest": "^6.2.3"
+  }
+}
