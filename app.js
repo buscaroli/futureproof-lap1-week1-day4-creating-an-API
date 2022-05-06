@@ -14,8 +14,8 @@ class StudentNotFoundError extends Error {
 }
 
 const students = [
-  { id: 1, name: 'Matt', subject: 'Math', grade: 'good' },
-  { id: 2, name: 'Simon', subject: 'History', grade: 'excellent' },
+  { name: 'Matt', subject: 'Math', grade: 'good' },
+  { name: 'Simon', subject: 'History', grade: 'excellent' },
 ]
 
 app.get('/', (req, res) => {
@@ -23,6 +23,9 @@ app.get('/', (req, res) => {
 })
 
 app.get('/students', (req, res) => {
+  if (students.length === 0) {
+    res.json({ message: 'No students in the Database.' })
+  }
   res.json(students)
 })
 
@@ -47,6 +50,43 @@ app.get('/students/:name', (req, res) => {
         subject: foundStudent.subject,
         grade: foundStudent.grade,
       })
+    }
+  } catch (err) {
+    res.status(404).send({ error: err.message })
+  }
+})
+
+app.post('/students', (req, res) => {
+  const newStudent = req.body
+
+  const foundStudentIndex = students.findIndex(
+    (student) =>
+      student.name.toLocaleLowerCase() === newStudent.name.toLowerCase()
+  )
+  if (foundStudentIndex !== -1) {
+    res.status(405).send({ message: 'Another user with the same name exists' })
+  } else {
+    students.push(newStudent)
+    res.status(201).send(newStudent)
+  }
+})
+
+app.delete('/students/:name', (req, res) => {
+  try {
+    const studentName = req.params.name
+    const foundStudentIndex = students.findIndex(
+      (student) =>
+        student.name.toLocaleLowerCase() === studentName.toLowerCase()
+    )
+    console.log('delete - foundStudent', foundStudentIndex)
+
+    if (foundStudentIndex === -1) {
+      throw new StudentNotFoundError('We could not delete that student')
+    } else {
+      students.splice(foundStudentIndex, 1)
+      let message = `${studentName} has been deleted.`
+      console.log(message)
+      res.status(204).send({ message })
     }
   } catch (err) {
     res.status(404).send({ error: err.message })
